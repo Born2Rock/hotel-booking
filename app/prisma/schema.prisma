@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator nestjsDto {
+  provider                        = "prisma-generator-nestjs-dto"
+  output                          = "../src/generated/nestjs-dto"
+  outputToNestJsResourceStructure = "false"
+  exportRelationModifierClasses   = "true"
+  reExport                        = "false"
+  createDtoPrefix                 = "Create"
+  updateDtoPrefix                 = "Update"
+  dtoSuffix                       = "Dto"
+  entityPrefix                    = ""
+  entitySuffix                    = ""
+  fileNamingStyle                 = "camel"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:@localhost:3306/hotel-booking"
+}
+
+model Users {
+  id                Int @id @default(autoincrement())
+  email             String @unique
+  passwordHash      String
+  name              String
+  contactPhone      String?
+  role              Role @default(client)
+  hotels            Hotels[]
+  reservations      Reservations[]
+  supportRequests   SupportRequests[]
+  chatMessages	    ChatMessages[]
+}
+
+model Hotels {
+  id            Int @id @default(autoincrement())
+  title         String
+  description   String? @db.Text
+  createdAt     DateTime
+  updatedAt     DateTime
+  user          Users @relation(fields: [userId], references: [id])
+  userId        Int
+  hotelRooms    HotelRooms[]
+  reservations  Reservations[]
+}
+
+model HotelRooms {
+  id            Int @id @default(autoincrement())
+  description   String? @db.Text
+  createdAt     DateTime
+  updatedAt     DateTime
+  isEnabled     Boolean @default(false)
+  hotel         Hotels @relation(fields: [hotelId], references: [id])
+  hotelId       Int
+  images        HotelRoomsImages[]
+  reservations  Reservations[]
+}
+
+model HotelRoomsImages {
+  id            Int @id @default(autoincrement())
+  image         String
+  hotelRoom     HotelRooms @relation(fields: [hotelRoomId], references: [id])
+  hotelRoomId   Int
+}
+
+model Reservations {
+  id            Int @id @default(autoincrement())
+  user          Users @relation(fields: [userId], references: [id])
+  userId        Int
+  hotel         Hotels @relation(fields: [hotelId], references: [id])
+  hotelId       Int
+  hotelRoom     HotelRooms @relation(fields: [hotelRoomId], references: [id])
+  hotelRoomId   Int
+  dateStart	DateTime
+  dateEnd	DateTime
+}
+
+model SupportRequests {
+  id            Int @id @default(autoincrement())
+  user          Users @relation(fields: [userId], references: [id])
+  userId        Int
+  createdAt	    DateTime
+  isActive	    Boolean? @default(false)
+  chatMessages	ChatMessages[]
+}
+
+model ChatMessages {
+  id        Int @id @default(autoincrement())
+  text	    String @db.Text
+  sentAt	DateTime
+  readAt	DateTime?
+  supportRequest          SupportRequests @relation(fields: [supportRequestId], references: [id])
+  supportRequestId        Int
+  user      Users @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+enum Role {
+    client
+    admin
+    manager
+}

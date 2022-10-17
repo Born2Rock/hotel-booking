@@ -1,0 +1,49 @@
+<html>
+<head>
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js" integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
+</head>
+<body>
+    <button id="getCommentsBtn">get comments</button>
+
+    <script>
+
+      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwibmFtZSI6IkFuZHJldyIsImNvbnRhY3RQaG9uZSI6Iis3OTIxNTg4MjI3OSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTY2NTkxODk3NSwiZXhwIjoxNjY2MDA4OTc1fQ.emg-AnNp-my9HMk4uNoAw5c1pg0zQHv7lXRayZq3uGc';
+      const userId = 2;
+      const socket = io('http://localhost:3000');
+      socket.on('connect', async function() {
+        await socket.emit('checkToken', {
+          token,
+          userId
+        }, (response) => {
+          if (!response.valid){
+            socket.disconnect();
+          }
+        });
+        subscribeToChat(2);
+      });
+
+      socket.on('disconnect', function() {
+        console.log('Disconnected');
+      });
+
+      socket.on('newChatMessage', function(data) {
+        console.log('newChatMessage', data);
+      });
+
+      function subscribeToChat(chatId){
+        socket.emit('subscribeToChat', {
+          token,
+          userId,
+          chatId
+        }, response => {
+          console.log('subscribedToChat');
+        });
+      }
+
+      document.getElementById('getCommentsBtn').addEventListener('click', () => {
+      });
+
+    </script>
+
+</body>
+</html>
