@@ -1,22 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseIntPipe,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUsersDto } from '../generated/nestjs-dto/update-users.dto';
 import { Users as UserModel } from '@prisma/client';
-import { Users as UsersDTO } from '../generated/nestjs-dto/users.entity';
 import { SearchUserParamsDto } from './dto/search-params-user.dto';
-import { JwtIsAdminAuthGuard } from '../auth/jwt-admin-auth.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles-guard';
@@ -31,13 +17,6 @@ export class UsersController {
   create(@Body() data): Promise<UserModel> {
     return this.usersService.create(data);
   }
-
-  /*
-    [x] 2.4.1. Создание пользователя POST /api/admin/users/
-    [ ] 2.4.2. Получение списка пользователей
-    [ ]
-    [ ]
-    */
 
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -87,10 +66,7 @@ export class UsersController {
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch('/users/:id')
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUsersDto,
-  ) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUsersDto) {
     const result = await this.usersService.update(id, updateUserDto);
     if (result) {
       const { passwordHash, ...userFields } = result;

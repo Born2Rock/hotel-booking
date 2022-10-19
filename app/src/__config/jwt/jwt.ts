@@ -1,4 +1,3 @@
 export const __JWT_CONFIG__ = {
-    secret: '12345678',
-}
-
+  secret: process.env.JWT_SECRET,
+};

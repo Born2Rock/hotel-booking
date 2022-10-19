@@ -1,5 +1,7 @@
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "windows", "linux-musl"]
+  //output   = "../src/generated/prisma-client-js"
 }
 
 generator nestjsDto {
@@ -18,7 +20,7 @@ generator nestjsDto {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:@localhost:3306/hotel-booking"
+  url      = env("PRISMA_DATABASE_URL")
 }
 
 model Users {

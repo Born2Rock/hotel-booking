@@ -1,10 +1,9 @@
-import { Body, Get, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Hotels as Hotel } from '../generated/nestjs-dto/hotels.entity';
-import { Prisma, Hotels as hotelModel } from '@prisma/client';
+import { Hotels as hotelModel, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
 
 import { HotelRooms } from '../generated/nestjs-dto/hotelRooms.entity';
-import { map } from 'rxjs';
 
 @Injectable()
 export class HotelsService {
@@ -46,7 +45,6 @@ export class HotelsService {
         updatedAt: false,
         isEnabled: true,
         hotelId: true,
-        //hotel: true,
         images: true,
       },
     });
@@ -58,12 +56,7 @@ export class HotelsService {
 
     return result;
   }
-  async editHotelRoom(
-    roomId,
-    hotelId,
-    fields,
-    images,
-  ): Promise<Partial<HotelRooms>> {
+  async editHotelRoom(roomId, hotelId, fields, images): Promise<Partial<HotelRooms>> {
     const payload = {
       description: fields.description,
       createdAt: new Date().toISOString(),
@@ -180,10 +173,6 @@ export class HotelsService {
   findOne(id: number) {
     return `This action returns a #${id} hotel`;
   }
-
-  // update(id: number, updateHotelDto: UpdateHotelDto) {
-  //   return `This action updates a #${id} hotel`;
-  // }
 
   remove(id: number) {
     return `This action removes a #${id} hotel`;

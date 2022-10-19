@@ -1,0 +1,31 @@
+services:
+  backend:
+    depends_on:
+      - mysql
+    container_name: "hotel_booking_api_${NODE_ENV}"
+    image: "hotel_booking_api_${NODE_ENV}"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+    build:
+      context: ./app
+      target: "${NODE_ENV}"
+    command: npm run start:${NODE_ENV}
+    ports:
+      - ${API_PUBLIC_PORT}:3000
+    volumes:
+      - ./app:/usr/src/app
+      - ./app/node_modules
+    env_file:
+      - .env
+    restart: unless-stopped
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ALLOW_EMPTY_PASSWORD: ${MYSQL_ALLOW_EMPTY_PASSWORD}
+    ports:
+      - ${MYSQL_OUTER_PORT}:3306
+    volumes:
+      - ./db:/var/lib/mysql
